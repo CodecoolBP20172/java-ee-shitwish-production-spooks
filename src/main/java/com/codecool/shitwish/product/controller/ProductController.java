@@ -1,6 +1,5 @@
 package com.codecool.shitwish.product.controller;
 
-import com.codecool.shitwish.product.model.Product;
 import com.codecool.shitwish.product.model.ProductStatus;
 import com.codecool.shitwish.product.service.ProductService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -12,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 
 @Controller
@@ -53,22 +53,17 @@ public class ProductController {
     }
 
     //exception handling is missing
-    @PostMapping(value = "/product/add-product")
-    public ResponseEntity sampleAddProduct(@RequestParam JSONObject jsonObject) {
-        //todo
-        //we have to read out the json object from a route in main and after
-        //save the entity like above
-        //this should be post mapping
-        //jsonobject from url
-        //JSONObject jsonObject = productService.sampleProductFields();
-        String name = (String) jsonObject.get("name");
-        ProductStatus productStatus = (ProductStatus) jsonObject.get("productStatus");
-        String description = (String) jsonObject.get("description");
-        String image = (String) jsonObject.get("image");
-        int userId = (Integer) jsonObject.get("userId");
-        Date date = (Date) jsonObject.get("date");
-        int price = (Integer) jsonObject.get("price");
-        productService.addProduct(name, productStatus, image, description, price, date, userId);
+    @RequestMapping(value = "/product/add-product", method = RequestMethod.POST)
+    public ResponseEntity addProduct(@RequestBody Map<String, String> requestBody) {
+
+        System.out.println(requestBody.toString());
+        String name = requestBody.get("name");
+        String description = requestBody.get("description");
+        String image = requestBody.get("image");
+        int userId = Integer.parseInt(requestBody.get("userId"));
+        int price = Integer.parseInt(requestBody.get("price"));
+        productService.addProduct(name, ProductStatus.ACTIVE, image, description, price, new Date(), userId);
+
         return new ResponseEntity(HttpStatus.OK);
     }
 
